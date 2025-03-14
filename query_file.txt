@@ -1,0 +1,194 @@
+# Click the Variables button, above, to create your own variables.
+GET ${exampleVariable1} // _search
+{
+  "query": {
+    "${exampleVariable2}": {} // match_all
+  }
+}
+
+//get api key
+POST /_security/api_key
+{
+  "name": "my_api_key",
+  "expiration": "1d", // The key will expire in 1 day. Adjust this value as needed.
+  "role_descriptors": {
+    "role_name": {
+      "cluster": ["all"],
+      "index": [
+        {
+          "names": ["*"],
+          "privileges": ["all"]
+        }
+      ]
+    }
+  }
+}
+
+//To create index and mapping
+PUT /products_index
+{
+  "mappings": {
+    "properties": {
+      "id": { "type": "keyword" },
+      "name": { "type": "text" },
+      "description": { "type": "text" },
+      "price": { "type": "float" },
+      "category": { "type": "keyword" },
+      "feature": {
+        "type": "text"
+      }
+    }
+  }
+}
+
+//delete index
+DELETE /products_index
+
+
+//adding data
+POST /products_index/_doc/1
+{
+  "id": "1",
+  "name": "Product A",
+  "description": "Description of Product A",
+  "price": 29.99,
+  "category": "Category A",
+  "feature": ["feature1", "feature2"]
+}
+
+POST /products_index/_doc/2
+{
+  "id": "2",
+  "name": "Product B",
+  "description": "Description of Product B",
+  "price": 29.99,
+  "category": "Category B",
+  "feature": ["feature1"]
+}
+
+POST /products_index/_doc/3
+{
+  "id": "3",
+  "name": "Product C",
+  "description": "Description of Product C",
+  "price": 29.99,
+  "category": "Category C",
+  "feature": ["feature2"]
+}
+
+//adding data in bulk
+POST /products_index/_bulk
+{"index":{}}
+{"id":"2","name":"Product B","description":"Description of Product B","price":39.99,"category":"Category B"}
+{"index":{}}
+{"id":"3","name":"Product C","description":"Description of Product C","price":49.99,"category":"Category C"}
+
+//get indices details
+GET /products_index
+GET /products
+
+//search data
+GET /products/_search
+{
+  "query": {
+    "match": {
+      "name": "my"
+    }
+  }
+}
+
+GET /products/_search
+{
+  "query": {
+    "match": {
+      "product_id": "31c8aab8-dc4f-4d93-a0a8-b84772d0e4f4"
+    }
+  }
+}
+
+GET /products/_search
+{
+  "query": {
+    "terms": {
+      "_id": [
+        "60EIqIwB7GIz8KPFAx-P", "7EEIqIwB7GIz8KPFAx-P"
+      ]
+    }
+  }
+}
+
+GET /products_index/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "feature": "feature1"
+          }
+        },
+        {
+          "match": {
+            "name": "product a"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET /products_index/_search
+{
+  "query": {
+    "match": {
+      "feature": "feature2"
+    }
+  }
+}
+
+//update data 
+POST /products_index/_update/1
+{
+  "doc": {
+    "name": "Updated new Product A",
+    "price": 39.99
+  }
+}
+
+// update by filter
+POST /products_index/_update_by_query
+{
+  "script": {
+    "source": "ctx._source.name = params.newName; ctx._source.price = params.newPrice",
+    "lang": "painless",
+    "params": {
+      "newName": "New Product Name",
+      "newPrice": 50.99
+    }
+  },
+  "query": {
+    "match": {
+      "category": "Category A"
+    }
+  }
+}
+
+
+
+//delete record 
+POST /products/_delete_by_query
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "status": "INACTIVE" }}
+      ]
+    }
+  }
+}
+
+
+
+
+
