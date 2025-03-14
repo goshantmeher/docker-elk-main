@@ -81,8 +81,8 @@ services:
       setup:
         condition: service_healthy
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
-    labels:
-      "co.elastic.logs/module": "elasticsearch"
+    # labels:
+    #   "co.elastic.logs/module": "elasticsearch"
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - esdata01:/usr/share/elasticsearch/data
@@ -126,8 +126,8 @@ services:
       es01:
         condition: service_healthy
     image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
-    labels:
-      "co.elastic.logs/module": "kibana"
+    # labels:
+    #   "co.elastic.logs/module": "kibana"
     volumes:
       - certs:/usr/share/kibana/config/certs
       - kibanadata:/usr/share/kibana/data
@@ -208,8 +208,8 @@ services:
       kibana:
         condition: service_healthy
     image: docker.elastic.co/logstash/logstash:${STACK_VERSION}
-    labels:
-      "co.elastic.logs/module": "logstash"
+    # labels:
+    #   "co.elastic.logs/module": "logstash"
     user: root
     volumes:
       - certs:/usr/share/logstash/certs
